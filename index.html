@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hospital Management System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+        }
+
+        header {
+            background: #2c7be5;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 22px;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #2c7be5;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            background: #2c7be5;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #1a5edb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #2c7be5;
+            color: white;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>🏥 Hospital Appointment Management</header>
+
+<div class="container">
+
+    <!-- Add Patient -->
+    <div class="card">
+        <h2>Add Patient</h2>
+        <input type="number" id="p_id" placeholder="Patient ID">
+        <input type="text" id="p_name" placeholder="Name">
+        <input type="date" id="p_dob">
+        
+        <select id="p_gender">
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+        </select>
+
+        <input type="text" id="p_mobile" placeholder="Mobile Number">
+
+        <button onclick="addPatient()">Add Patient</button>
+    </div>
+
+    <!-- Add Doctor -->
+    <div class="card">
+        <h2>Add Doctor</h2>
+        <input type="number" id="d_id" placeholder="Doctor ID">
+        <input type="text" id="d_name" placeholder="Name">
+        <input type="text" id="d_spec" placeholder="Specialization">
+        <input type="text" id="d_mobile" placeholder="Mobile Number">
+
+        <button onclick="addDoctor()">Add Doctor</button>
+    </div>
+
+    <!-- Book Appointment -->
+    <div class="card">
+        <h2>Book Appointment</h2>
+        <input type="number" id="c_pid" placeholder="Patient ID">
+        <input type="number" id="c_did" placeholder="Doctor ID">
+        <input type="date" id="c_date">
+
+        <button onclick="bookConsult()">Book Appointment</button>
+    </div>
+
+    <!-- View Patients -->
+    <div class="card">
+        <h2>All Patients</h2>
+        <button onclick="getPatients()">Load Patients</button>
+
+        <table id="patientTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>DOB</th>
+                    <th>Gender</th>
+                    <th>Mobile</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="card">
+        <div class="card">
+    <h2>All Doctors</h2>
+    <button onclick="getDoctors()">Load Doctors</button>
+
+    <table id="doctorTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Specialization</th>
+                <th>Mobile</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+    <h2>Appointments</h2>
+    <button onclick="getAppointments()">Load Appointments</button>
+
+    <table id="appointmentTable">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Doctor</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+</div>
+
+<script>
+
+// Add Patient
+function addPatient() {
+    fetch("http://localhost:3000/addPatient", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            P_ID: document.getElementById("p_id").value,
+            Name: document.getElementById("p_name").value,
+            DOB: document.getElementById("p_dob").value,
+            Gender: document.getElementById("p_gender").value,
+            Mobile_No: document.getElementById("p_mobile").value
+        })
+    })
+    .then(res => res.text())
+    .then(data => alert(data));
+}
+
+// Add Doctor
+function addDoctor() {
+    fetch("http://localhost:3000/addDoctor", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            D_ID: document.getElementById("d_id").value,
+            Name: document.getElementById("d_name").value,
+            Specialization: document.getElementById("d_spec").value,
+            Mobile_No: document.getElementById("d_mobile").value
+        })
+    })
+    .then(res => res.text())
+    .then(data => alert(data));
+}
+
+// Book Appointment
+function bookConsult() {
+    fetch("http://localhost:3000/bookConsult", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            P_ID: document.getElementById("c_pid").value,
+            D_ID: document.getElementById("c_did").value,
+            Consult_Date: document.getElementById("c_date").value
+        })
+    })
+    .then(res => res.text())
+    .then(data => alert(data));
+}
+
+// Get Patients
+function getPatients() {
+    fetch("http://localhost:3000/patients")
+    .then(res => res.json())
+    .then(data => {
+        let table = document.querySelector("#patientTable tbody");
+        table.innerHTML = "";
+
+        data.forEach(p => {
+            let row = `<tr>
+                <td>${p.P_ID}</td>
+                <td>${p.Name}</td>
+                <td>${p.DOB}</td>
+                <td>${p.Gender}</td>
+                <td>${p.Mobile_No}</td>
+            </tr>`;
+            table.innerHTML += row;
+        });
+    });
+}
+function getDoctors() {
+    fetch("http://localhost:3000/doctors")
+    .then(res => res.json())
+    .then(data => {
+        let table = document.querySelector("#doctorTable tbody");
+        table.innerHTML = "";
+
+        data.forEach(d => {
+            let row = `<tr>
+                <td>${d.D_ID}</td>
+                <td>${d.Name}</td>
+                <td>${d.Specialization}</td>
+                <td>${d.Mobile_No}</td>
+            </tr>`;
+            table.innerHTML += row;
+        });
+    });
+}
+function getAppointments() {
+    fetch("http://localhost:3000/appointments")
+    .then(res => res.json())
+    .then(data => {
+        let table = document.querySelector("#appointmentTable tbody");
+        table.innerHTML = "";
+
+        data.forEach(a => {
+            let row = `<tr>
+                <td>${a.Patient}</td>
+                <td>${a.Doctor}</td>
+                <td>${a.Consult_Date}</td>
+            </tr>`;
+            table.innerHTML += row;
+        });
+    });
+}
+</script>
+
+</body>
+</html>
